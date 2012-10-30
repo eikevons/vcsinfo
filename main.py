@@ -1,6 +1,7 @@
 from errors import WrongVCS
 from common import calling_file
 from git import version as git_version
+from svn import version as svn_version
 
 __all__ = ["version", "git_version"]
 
@@ -9,11 +10,13 @@ def version(f=None):
     if f is None:
         f = calling_file(1)
 
-    try:
-        return "git: %s" % git_version(f)
-    except WrongVCS, err:
-        # TODO try svn, hg
-        raise err
+    for name, func in (("git", git_version), ("svn", svn_version)):
+        try:
+            vers = func(f)
+            return "%s: %s" % (name, vers)
+        except WrongVCS:
+            pass
+    raise WrongVCS("'%s' is not in a known vcs" % (f,))
 
 
 
