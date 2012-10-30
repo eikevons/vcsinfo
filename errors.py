@@ -1,6 +1,11 @@
-
-class WrongVCS(StandardError):
+class VCSError(StandardError):
     pass
 
-class CommandFailed(StandardError):
+class WrongVCS(VCSError):
+    pass
+
+class CommandFailed(VCSError):
+    pass
+
+class FileNotFound(VCSError):
     pass
