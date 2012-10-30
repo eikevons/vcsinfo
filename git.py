@@ -36,7 +36,8 @@ def describe(f=None):
     p = subprocess.Popen(["git", "describe"],
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
-                         cwd=dir)
+                         cwd=dir,
+                         env={"LANG":"C"})
     if p.wait() == 0:
         return p.stdout.read().strip()
 
@@ -65,7 +66,8 @@ def sha1(f=None):
     p = subprocess.Popen(["git", "rev-parse", "HEAD"],
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
-                         cwd=dir)
+                         cwd=dir,
+                         env={"LANG":"C"})
 
     if p.wait() == 0:
         return p.stdout.read().strip()
