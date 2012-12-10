@@ -3,7 +3,7 @@ from common import calling_file
 from git import version as git_version
 from svn import version as svn_version
 
-__all__ = ["version", "git_version"]
+__all__ = ["version", "git_version", "svn_version", "calling_file"]
 
 
 def version(f=None):
