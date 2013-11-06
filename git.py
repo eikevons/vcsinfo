@@ -47,7 +47,7 @@ def describe(f=None):
     raise CommandFailed("Calling '%s' in '%s' failed with '%s'" % ("git describe", dir, err))
 
 
-def sha1(f=None):
+def sha1(f=None, short=True):
     """Get git sha1 sum information of the caller.
 
     Calls ``git rev-parse HEAD`` in the directory of the file of the calling
@@ -58,12 +58,17 @@ def sha1(f=None):
     f : string, optional
         The file where ``git`` is called. If `None` (default) the
         directory of the file where the calling frame is defined is called.
+    short : bool, optional
+        If `True` (default) return only the shortend sha1 hash.
     """
     if f is None:
         f = calling_file(1)
 
     dir = _get_dir(f)
-    p = subprocess.Popen(["git", "rev-parse", "HEAD"],
+    cmd = ["git", "rev-parse", "HEAD"]
+    if short:
+        cmd.insert(2, '--short')
+    p = subprocess.Popen(cmd,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE,
                          cwd=dir,
@@ -75,7 +80,7 @@ def sha1(f=None):
     err = p.stderr.read().strip()
     if "Not a git repository" in err:
         raise WrongVCS("'%s' is not in a git repository" % dir)
-    raise CommandFailed("Calling '%s' in '%s' failed with '%s'" % ("git rev-parse HEAD", dir, err))
+    raise CommandFailed("Calling '%s' in '%s' failed with '%s'" % (" ".join(cmd), dir, err))
 
 
 def version(f=None):
@@ -95,4 +100,4 @@ def version(f=None):
     try:
         return describe(f)
     except CommandFailed:
-        return sha1(f)[:6]
+        return sha1(f)
